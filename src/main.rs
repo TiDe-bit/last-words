@@ -2,11 +2,10 @@ use anyhow::{Error, Ok};
 use bollard::{container::LogsOptions, Docker};
 use core::time::Duration;
 use futures::stream::StreamExt;
-use chrono::DateTime;
 use std::{
     env,
     io::{stdout, Write},
-    ops::{Add},
+    ops::Add,
 };
 
 mod undertaker;
