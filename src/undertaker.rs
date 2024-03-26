@@ -27,30 +27,13 @@ pub(crate) async fn get_full_container_name(
             }))
             .await?;
 
-        dbg!("containers: {:?}", containers.clone().len());
         for container in containers {
-            dbg!("checking container: {:?}", container.names.clone());
             for container_name in container.names.iter() {
-                dbg!(
-                    "container name: {:?}, searched name: {:?}",
-                    container_name,
-                    partial_container_name.clone()
-                );
-                dbg!(
-                    "found: {}",
-                    container_name
-                        .clone()
-                        .first()
-                        .unwrap()
-                        .contains(&partial_container_name)
-                );
-
                 if container_name
                     .first()
                     .unwrap()
                     .contains(&partial_container_name)
                 {
-                    dbg!("found container: {:?}", container_name.clone());
                     return Ok((*container_name).concat());
                 }
             }
@@ -62,4 +45,3 @@ pub(crate) async fn get_full_container_name(
         time::sleep(ten_millis).await;
     }
 }
-

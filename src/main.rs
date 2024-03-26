@@ -16,15 +16,11 @@ const DAY: Duration = Duration::from_secs(86400);
 async fn main() -> Result<(), Error> {
     let args: Vec<String> = env::args().collect();
     assert!(args.len() >= 2);
-    println!("last words for {:?}", args[1]);
+    println!("last words for container {:?}", args[1]);
     let docker = Docker::connect_with_socket_defaults();
     let container_name = crate::undertaker::get_full_container_name(args[1].clone())
         .await
         .unwrap();
-    dbg!(
-        "now streaming logs for {:?}",
-        container_name.clone().strip_prefix("/")
-    );
     let log_stream = docker.unwrap().logs(
         container_name.strip_prefix("/").unwrap(),
         Some(LogsOptions::<String> {
