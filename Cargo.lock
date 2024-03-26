@@ -497,6 +497,7 @@ dependencies = [
  "bollard",
  "chrono",
  "futures",
+ "log",
  "tokio",
  "tokio-macros 0.2.6",
 ]
