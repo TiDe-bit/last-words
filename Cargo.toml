@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.80"
-bollard = "*"
+bollard = "0.16.1"
 chrono = "0.4.35"
 futures = "0.3.30"
 log = "0.4.21"
