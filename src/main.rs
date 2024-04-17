@@ -7,6 +7,7 @@ use std::{
     io::{stdout, Write},
     ops::Add,
 };
+use tokio::time;
 
 mod undertaker;
 
@@ -33,9 +34,11 @@ async fn main() -> Result<(), Error> {
             until: chrono::Utc::now().add(DAY).timestamp(),
         }),
     );
+    time::sleep(Duration::from_millis(10)).await;
     let mut stream = log_stream;
     while let Some(item) = stream.next().await {
         stdout().write_all(item?.as_ref()).unwrap();
     }
+
     Ok(())
 }
