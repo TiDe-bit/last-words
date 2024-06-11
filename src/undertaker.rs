@@ -8,12 +8,9 @@ use bollard::Docker;
 
 pub(crate) async fn get_full_container_name(
     partial_container_name: String,
+    docker: &Docker,
 ) -> Result<String, Error> {
     use std::collections::hash_map;
-
-    let docker = Docker::connect_with_socket_defaults()?;
-
-    dbg!("searching for {}", partial_container_name.clone());
 
     loop {
         timeout().await;
