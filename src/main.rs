@@ -2,7 +2,10 @@ use anyhow::{Error, Ok};
 use bollard::{container::LogsOptions, Docker};
 use core::{panic, time::Duration};
 use futures::stream::StreamExt;
-use std::{env, ops::Add};
+use std::{
+    env,
+    ops::{Add, Deref},
+};
 use tokio::time;
 
 mod undertaker;
@@ -18,20 +21,27 @@ async fn main() -> Result<(), Error> {
 
     println!("last words for docker container {}", args[1]);
 
-    let container_name = crate::undertaker::get_full_container_name(args[1].clone(), &docker)
-        .await
-        .unwrap();
+    let mut container_name = String::from("");
+    let maybe_container_name =
+        crate::undertaker::get_full_container_name(args[1].clone(), &docker).await;
 
-    let pruned_container_name = container_name.strip_prefix("/").or(Some(&container_name));
+    if maybe_container_name.is_err() {
+        panic!(
+            "couldn't actually resolve container name from docker. {:#?}",
+            maybe_container_name.err()
+        );
+    } else {
+        container_name = maybe_container_name.ok().unwrap();
+    }
 
-    println!("resolved container name {:#?}", pruned_container_name);
+    println!("resolved container name {:#?}", container_name);
 
-    if pruned_container_name.is_none() {
-        panic!("couldn't actually resolve container name.");
+    if container_name.starts_with("/") {
+        container_name.remove(0);
     }
 
     let log_stream = docker.logs(
-        pruned_container_name.unwrap(),
+        &container_name,
         Some(LogsOptions::<String> {
             follow: true,
             stdout: true,
