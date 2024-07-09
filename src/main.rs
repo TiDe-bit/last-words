@@ -3,27 +3,36 @@ use bollard::{container::LogsOptions, Docker};
 use core::{panic, time::Duration};
 use futures::stream::StreamExt;
 use std::{
-    env,
-    ops::{Add, Deref},
+    ops::{Add},
 };
 use tokio::time;
+use clap::{Parser};
 
 mod undertaker;
 
 const DAY: Duration = Duration::from_secs(86400);
 
+/// Container Logs Necromancer
+#[derive(Debug, Parser)] // requires `derive` feature
+#[command(name = "last_words")]
+#[command(about = "Container-logs necromancer CLI", long_about = None)]
+struct Cli {
+    #[arg(value_name = "CONTAINER_NAME")]
+    container_name: String,
+}
+
+
 #[tokio::main]
 async fn main() -> Result<(), Error> {
-    let args: Vec<String> = env::args().collect();
-    assert!(args.len() >= 2);
+    let args = Cli::parse();
 
     let docker = Docker::connect_with_socket_defaults().unwrap();
 
-    println!("last words for docker container {}", args[1]);
+    println!("last words for docker container {}...", args.container_name);
 
     let mut container_name = String::from("");
     let maybe_container_name =
-        crate::undertaker::get_full_container_name(args[1].clone(), &docker).await;
+        crate::undertaker::get_full_container_name(args.container_name.clone(), &docker).await;
 
     if maybe_container_name.is_err() {
         panic!(
