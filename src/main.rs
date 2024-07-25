@@ -7,18 +7,22 @@ use std::{
 };
 use tokio::time;
 use clap::{Parser};
+use colored::{Colorize};
 
 mod undertaker;
 
 const DAY: Duration = Duration::from_secs(86400);
 
 /// Container Logs Necromancer
-#[derive(Debug, Parser)] // requires `derive` feature
+#[derive(Debug, Parser)]
 #[command(name = "last_words")]
 #[command(about = "Container-logs necromancer CLI", long_about = None)]
 struct Cli {
     #[arg(value_name = "CONTAINER_NAME")]
     container_name: String,
+
+    #[arg(short, long, default_value = "white" )]
+    color: String,
 }
 
 
@@ -65,7 +69,7 @@ async fn main() -> Result<(), Error> {
     let _ = time::sleep(Duration::from_millis(10));
     let mut stream = log_stream;
     while let Some(item) = stream.next().await {
-        print!("{}", item.unwrap())
+        print!("{}", item.unwrap().to_string().color(args.color.clone()));
     }
 
     Ok(())
