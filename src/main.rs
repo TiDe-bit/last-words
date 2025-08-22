@@ -1,13 +1,11 @@
 use anyhow::{Error, Ok};
 use bollard::{container::LogsOptions, Docker};
+use clap::Parser;
+use colored::Colorize;
 use core::{panic, time::Duration};
 use futures::stream::StreamExt;
-use std::{
-    ops::{Add},
-};
+use std::{env, ops::Add};
 use tokio::time;
-use clap::{Parser};
-use colored::{Colorize};
 
 mod undertaker;
 
@@ -21,16 +19,20 @@ struct Cli {
     #[arg(value_name = "CONTAINER_NAME")]
     container_name: String,
 
-    #[arg(short, long, default_value = "white" )]
+    #[arg(short, long, default_value = "white")]
     color: String,
 }
-
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
     let args = Cli::parse();
 
-    let docker = Docker::connect_with_socket_defaults().unwrap();
+    if !env::var("DOCKER_HOST").is_ok() {
+        println!("Default DOCKER_HOST not set. Setting unix:///var/run/docker.sock");
+        env::set_var("DOCKER_HOST", "unix:///var/run/docker.sock");
+    }
+
+    let docker = Docker::connect_with_defaults().unwrap();
 
     println!("last words for docker container {}...", args.container_name);
 
