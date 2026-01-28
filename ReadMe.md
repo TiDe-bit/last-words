@@ -35,14 +35,14 @@ world
 
 ### Manual
 
-> **Note**: Make shure you hace [rust](https://www.rust-lang.org/tools/install) installed.
+> **Note**: Make shure you have [rust](https://www.rust-lang.org/tools/install) installed.
 
 ```sh
   git clone git@github.com:TiDe-bit/last-words.git && \
   cd last_words && \
   cargo install --path . && \
   cd .. && \
-  rm -fr ./last_words
+  rm -fr ./last-words
 ```
 
 ## Why last_words?
