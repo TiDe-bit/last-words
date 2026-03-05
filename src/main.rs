@@ -21,6 +21,9 @@ struct Cli {
 
     #[arg(short, long, default_value = "white")]
     color: String,
+
+    #[arg(short, long, default_value = "")]
+    stop_string: String,
 }
 
 #[tokio::main]
@@ -71,7 +74,12 @@ async fn main() -> Result<(), Error> {
     let _ = time::sleep(Duration::from_millis(10));
     let mut stream = log_stream;
     while let Some(item) = stream.next().await {
-        print!("{}", item.unwrap().to_string().color(args.color.clone()));
+        let log_line = item.unwrap().to_string();
+        print!("{}", log_line.color(args.color.clone()));
+        if args.stop_string.len() > 1 && log_line.contains(args.stop_string.as_str()) {
+            println!("read until stop line containing: {}", args.stop_string);
+            break;
+        }
     }
 
     Ok(())
