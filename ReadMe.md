@@ -1,3 +1,4 @@
+repository moved to [codeberg](https://codeberg.org/tim-is-teal/last-words.git)
 # last_words
 
 **last_words** is a small CLI tool designed to help you debug container startup issues quickly.
